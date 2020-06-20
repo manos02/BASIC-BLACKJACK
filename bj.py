@@ -1,165 +1,106 @@
-
-#create deck
-#shuffle cards
-#give one card to the player then to the dealer and then again to the player and one to the dealer faced up
-#player decides if he wants to hit or stay
-#if you hit and go over 21 you bust regardless the dealer's cards / if you hit 21 you win
-#then if the cards of the dealer are lower than 17 he has to hit
-
 import random
 
+
 def main():
-    deck = ["2","3","4","5","6","7","8","9","10","J","Q","K","A",
-            "2","3","4","5","6","7","8","9","10","J","Q","K","A",
-            "2","3","4","5","6","7","8","9","10","J","Q","K","A",
-            "2","3","4","5","6","7","8","9","10","J","Q","K","A"]
+    class Deck:
+        def __init__(self):
+            self.deck = ["2","3","4","5","6","7","8","9","J","Q","K","A",
+                      "2","3","4","5","6","7","8","9","J","Q","K","A",
+                      "2","3","4","5","6","7","8","9","J","Q","K","A",
+                      "2","3","4","5","6","7","8","9","J","Q","K","A"]
 
-    player_cards = []
-    dealer_cards = []
+            random.shuffle(self.deck)
 
+    deck1 = Deck()                 #  create and shuffle deck
 
-    random.shuffle(deck)
+    class Player:
+        def __init__(self, name):
+            self.hand = 0
+            self.cards = []
+            self.name = name
+            self.show_cards = True
+            self.cards.append(deck1.deck.pop())
+            self.cards.append(deck1.deck.pop())
+            self.calculate_hand()
+            self.printing()
+            self.cal_winner()      # add 2 cards to the dealer and the player prints their cards and if check if hit blackjack
 
-
-    player_cards.append(deck[0])
-    player_cards.append(deck[1])
-    dealer_cards.append(deck[7])
-    dealer_cards.append(deck[8])
-
-
-    print("player has ", player_cards)
-    print("dealer has ", dealer_cards[0], "X")
-
-    try:
-        p_cards = int(player_cards[0]) + int(player_cards[1])
-    except:
-        try:
-            p_cards = int(player_cards[0]) + 10
-            if player_cards[1] == "A":
-                p_cards += 1
-        except:
-            try:
-                p_cards = int(player_cards[1]) + 10
-                if player_cards[0] == "A":
-                    p_cards += 1
-            except:
-                p_cards = 20
-                if player_cards[0] == "A" or player_cards[1] == "A":
-                    p_cards = 21
-                if player_cards[0] == "A" and player_cards[1] == "A":
-                    p_cards = 12
+        def printing(self):
+            if self.show_cards:
+                if self.name == "player1":
+                    print(f"{self.name} cards are {self.cards} ({self.hand}) ")
+                else:
+                    print(f"{self.name} cards are ['{self.cards[0]}, '?'] ")
+            else:
+                print(f"{self.name} cards are {self.cards} ({self.hand}) ")    # prints player's card and dealer's cards
 
 
-    try:
-        d_cards = int(dealer_cards[0]) + int(dealer_cards[1])
-    except:
-        try:
-            d_cards = int(dealer_cards[0]) + 10
-            if dealer_cards[1] == "A":
-                d_cards += 1
-        except:
-            try:
-                d_cards = int(dealer_cards[1]) + 10
-                if dealer_cards[0] == "A":
-                    d_cards += 1
-            except:
-                d_cards = 20
-                if dealer_cards[0] == "A" or dealer_cards[1] == "A":
-                    d_cards = 21
-                if dealer_cards[0] == "A" and dealer_cards[1] == "A":
-                    d_cards = 12
+        def add_card(self):
+            self.cards.append(deck1.deck.pop())
+            self.hand = 0
+            self.calculate_hand()
+            self.printing()             # adds cards to the player or the dealer and calculates the sum of their cards. Prints again their score and 
+                                        #cards
+
+        def calculate_hand(self):
+            for card in self.cards:
+                if card in "23456789":
+                    self.hand += int(card)
+                elif card in "JQK":
+                    self.hand += 10
+                elif card in "A":
+                    if self.hand >= 11:
+                        self.hand += 1
+                    else:
+                        self.hand += 11
+            return self.hand                # calculates the sum of player's and dealer's cards
 
 
-    if d_cards != 21:
-        if p_cards == 21:
-            print("YOU WON")
+        def cal_winner(self):
+            if self.hand == 21:
+                print(f"{self.name} has  WON")
+                main()
+            if self.hand > 21:
+                print(f"{self.name}  has LOST")
+                main()                             # checks if hit blackjack or over 21
+
+
+
+    player1 = Player("player1")
+    dealer = Player("dealer")
+
+
+    def calculate_winner():
+        if dealer.hand > player1.hand:
+            print(f"{dealer.name} has  WON")
             main()
-    else:
-        if p_cards != 21:
-            print(dealer_cards)
-            print("YOU LOST")
+        if dealer.hand == player1.hand:
+            print("IT'S A TIE")
             main()
-        else:
-            print("TIE")
-            main()
+        if player1.hand < dealer.hand:
+            print(f"{player1.name} has LOST")
+            main()                                       # checks who won between player and dealer
 
 
     answer = "hit"
-    i = 3
-    x = 2
-    a = 9
-    b = 2
-
     while answer == "hit":
-        print("Do you want to hit or stay? ")
+        print("Do you want to hit or stay")
         answer = input()
         if answer == "hit":
-            player_cards.append(deck[i])
-            print("player has ", player_cards)
-            try:
-                 p_cards += int(player_cards[x])
-
-            except:
-                 p_cards += 10
-                 if player_cards[0] and dealer_cards[1] and player_cards[2] == "A":
-                    p_cards = 13
-
-                 if player_cards[x] == "A":
-                     if 21 - p_cards > 11:
-                         p_cards += 11
-                     else:
-                         p_cards += 1
-
-            x += 1
-            i += 1
-            if p_cards > 21:
-                print("YOU LOST")
-                main()
-            if p_cards == 21:
-                print("YOU WON")
-                main()
-
-
+            player1.add_card()
+            player1.cal_winner()
         else:
-            print(player_cards)
-            print(dealer_cards)
-            if d_cards == 21 or d_cards > p_cards:
-                print("YOU LOST")
-                main()
-
-            while d_cards < 17 or d_cards<p_cards:
-                dealer_cards.append(deck[a])
-                print("dealer has", dealer_cards)
-                try:
-                    d_cards += int(dealer_cards[b])
-                except:
-                    d_cards += 10
-                    if dealer_cards[b] == "A":
-                        if 21-d_cards > 11:
-                            d_cards += 11
-                        else:
-                            d_cards += 1
-
-
-                print(d_cards)
-
-                b += 1
-                a += 1
-            if d_cards > 21:
-                print("YOU WON")
-                main()
-            if p_cards > d_cards:
-                print("YOU WON")
-                main()
-            elif p_cards == d_cards:
-                print("TIE")
-                main()
+            dealer.show_cards = False
+            player1.printing()
+            while dealer.hand<player1.hand or (dealer.hand==player1.hand and dealer.hand<=17):
+                dealer.add_card()
             else:
-                print("YOU LOST")
-                main()
+                dealer.cal_winner()
+                calculate_winner()
+                                             # loop which player hits or stands and then dealer cards are added. It decides the winner based with 
+                                             # the previous functions
+main()
 
 
-if __name__ == '__main__':
-    main()
 
 
